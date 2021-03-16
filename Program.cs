@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HeistPartDeux
 {
@@ -7,7 +8,35 @@ namespace HeistPartDeux
     {
         static void Main(string[] args)
         {
-            List<IRobber> rolodex = new List<IRobber>()
+            List<IRobber> rolodex = StartingLineup();
+            GoonEntry(rolodex);
+            Console.WriteLine("------------");
+            Console.WriteLine("------------");
+            Console.WriteLine("------------");
+            Bank targetBank = new Bank()
+            {
+                AlarmScore = new Random().Next(0, 100) + 1,
+                VaultScore = new Random().Next(0, 100) + 1,
+                SecurityGuardScore = new Random().Next(0, 100) + 1,
+                CashOnHand = new Random().Next(50000, 1000000) + 1
+            };
+            Dictionary<int, string> bankProps = new Dictionary<int, string>(){
+                {targetBank.AlarmScore, "Alarms"}, {targetBank.VaultScore, "Vault"}, {targetBank.SecurityGuardScore, "Security Guards"}
+            };
+            List<int> bankKeys = bankProps.Select(kvp => kvp.Key).ToList();
+            bankKeys.Sort();
+            Console.WriteLine("Recon Report");
+            Console.WriteLine("------------");
+            Console.WriteLine($"Most Secure: {bankProps[bankKeys[2]]}");
+            Console.WriteLine($"Least Secure: {bankProps[bankKeys[0]]}");
+            Console.WriteLine();
+            Console.WriteLine("Choose your crew!");
+            PrintGoons(rolodex);
+        }
+
+        static List<IRobber> StartingLineup()
+        {
+            return new List<IRobber>()
             {
                 new Muscle(){
                     Name = "Big Jim",
@@ -40,18 +69,15 @@ namespace HeistPartDeux
                     PercentageCut = 8
                 }
             };
-            Console.WriteLine("Available Operatives:");
-            foreach (IRobber goon in rolodex)
-            {
-                Console.WriteLine("------------");
-                Console.WriteLine($"Name: {goon.Name}");
-                Console.WriteLine($"Specialty: {goon.Specialty}");
-                Console.WriteLine($"Skill: {goon.SkillLevel}");
-                Console.WriteLine($"Expected cut: {goon.PercentageCut}%");
-            }
+        }
+
+        static void GoonEntry(List<IRobber> rolodex)
+        {
             bool entering = true;
             while (entering)
             {
+                Console.WriteLine($"Available Operatives: {rolodex.Count}");
+                Console.WriteLine();
                 Console.WriteLine("Add another operative? (y/n)");
                 Console.Write(" > ");
                 string userAnswer = Console.ReadLine();
@@ -152,7 +178,20 @@ namespace HeistPartDeux
                     });
                 }
             }
-            Console.Clear();
+            Console.WriteLine();
+        }
+
+        static void PrintGoons(List<IRobber> goons)
+        {
+            for (int i = 0; i < goons.Count; i++)
+            {
+                Console.WriteLine("------------");
+                Console.WriteLine($"Operative #{i + 1}");
+                Console.WriteLine($"Name: {goons[i].Name}");
+                Console.WriteLine($"Specialty: {goons[i].Specialty}");
+                Console.WriteLine($"Skill: {goons[i].SkillLevel}");
+                Console.WriteLine($"Expected cut: {goons[i].PercentageCut}%");
+            }
         }
     }
 }
