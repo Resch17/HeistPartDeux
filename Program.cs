@@ -109,14 +109,9 @@ namespace HeistPartDeux
             Console.WriteLine(" ");
             PauseClear();
 
-            foreach (IRobber goon in crew)
-            {
-                Console.WriteLine(" ");
-                goon.PerformSkill(targetBank);
-                Console.WriteLine(" ");
-                PauseClear();
-            }
+            BankHeist(crew, targetBank);            
             Console.WriteLine("-----------------------------");
+
             if (targetBank.IsSecure)
             {
                 Console.WriteLine("You failed to rob the bank!");
@@ -313,6 +308,17 @@ namespace HeistPartDeux
             Console.WriteLine($"Skill: {goon.SkillLevel}");
             Console.WriteLine($"Expected cut: {goon.PercentageCut}%");
             Console.WriteLine(" ");
+        }
+
+        static void BankHeist(List<IRobber> crewInput, Bank bankInput)
+        {
+            foreach (IRobber goon in crewInput)
+            {
+                Console.WriteLine(" ");
+                goon.PerformSkill(bankInput);
+                Console.WriteLine(" ");
+                PauseClear();
+            }
         }
 
         static void InvalidEntry()
