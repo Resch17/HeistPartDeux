@@ -8,16 +8,21 @@ namespace HeistPartDeux
     {
         static void Main(string[] args)
         {
+            // affordance to add new goons
             List<IRobber> rolodex = StartingLineup();
             GoonEntry(rolodex);
+
             Console.WriteLine("------------");
+
             Bank targetBank = new Bank()
             {
-                AlarmScore = new Random().Next(0, 101),
-                VaultScore = new Random().Next(0, 101),
-                SecurityGuardScore = new Random().Next(0, 101),
+                AlarmScore = new Random().Next(1, 101),
+                VaultScore = new Random().Next(1, 101),
+                SecurityGuardScore = new Random().Next(1, 101),
                 CashOnHand = new Random().Next(50000, 1000001)
             };
+
+            // assess bank security
             Dictionary<int, string> bankProps = new Dictionary<int, string>(){
                 {targetBank.AlarmScore, "Alarms"},
                 {targetBank.VaultScore, "Vault"},
@@ -30,22 +35,18 @@ namespace HeistPartDeux
             Console.WriteLine($"Most Secure: {bankProps[bankKeys[2]]}");
             Console.WriteLine($"Least Secure: {bankProps[bankKeys[0]]}");
             Console.WriteLine();
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            PauseClear();
+
             Console.WriteLine("Choose your crew!");
             Console.WriteLine("You can choose as many goons as you want, but keep an eye on the cut %");
-            Console.WriteLine("Press any key to continue...");
-            Console.WriteLine("");
-            Console.ReadKey();
-            Console.Clear();
-
+            PauseClear();
             List<IRobber> crew = new List<IRobber>();
             List<IRobber> eligibleGoons = new List<IRobber>();
             bool choosingCrew = true;
             int availableCut = 100;
             while (choosingCrew)
             {
+                // eligible goons won't take our available cut below zero
                 eligibleGoons = rolodex.Where(g => availableCut - g.PercentageCut > 0).ToList();
                 if (eligibleGoons.Count > 0)
                 {
@@ -74,24 +75,18 @@ namespace HeistPartDeux
                                 Console.Clear();
                                 Console.WriteLine($"{newMember.Name} - {newMember.Specialty} added to the crew!");
                                 rolodex.Remove(newMember);
-                                Console.WriteLine("Press any key to continue...");
-                                Console.ReadKey();
-                                Console.Clear();
+                                PauseClear();
                             }
                         }
                         else
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Invalid entry.");
-                            Console.ResetColor();
+                            InvalidEntry();
                             PrintGoons(eligibleGoons);
                         }
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Invalid entry.");
-                        Console.ResetColor();
+                        InvalidEntry();
                         PrintGoons(eligibleGoons);
                     }
                 }
@@ -102,6 +97,8 @@ namespace HeistPartDeux
                 }
             }
             Console.Clear();
+
+
             Console.WriteLine("----------------------------------");
             Console.WriteLine("Let's hit the bank!!!");
             Console.WriteLine("Here's the crew: ");
@@ -110,17 +107,14 @@ namespace HeistPartDeux
             Console.WriteLine(" ");
             Console.WriteLine(" ");
             Console.WriteLine(" ");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            PauseClear();
+
             foreach (IRobber goon in crew)
             {
                 Console.WriteLine(" ");
                 goon.PerformSkill(targetBank);
                 Console.WriteLine(" ");
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                PauseClear();
             }
             Console.WriteLine("-----------------------------");
             if (targetBank.IsSecure)
@@ -319,6 +313,20 @@ namespace HeistPartDeux
             Console.WriteLine($"Skill: {goon.SkillLevel}");
             Console.WriteLine($"Expected cut: {goon.PercentageCut}%");
             Console.WriteLine(" ");
+        }
+
+        static void InvalidEntry()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Invalid entry.");
+            Console.ResetColor();
+        }
+
+        static void PauseClear()
+        {
+            Console.WriteLine("Press any key to continue...");            
+            Console.ReadKey();
+            Console.Clear();
         }
     }
 }
